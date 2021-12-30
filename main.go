@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"covid-app/models"
+	"covid-app-ins/models"
 
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
@@ -218,5 +218,5 @@ func main() {
 	e.GET("/covid_stats", CovidStats)
 
 	e.Logger.Print(fmt.Sprintf("Listening to port %s", port))
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":" + port)))
 }

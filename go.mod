@@ -1,4 +1,4 @@
-module covid-app
+module covid-app-ins
 
 // +heroku goVersion go1.17
 go 1.17
