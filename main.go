@@ -30,7 +30,7 @@ func main() {
 
 	utils.Logger("INFO", "Listening to port: "+port, "main.go", time.Now())
 
-	server_url := fmt.Sprintf("localhost:" + port)
+	server_url := fmt.Sprintf(":" + port)
 	utils.Logger("INFO", "Starting server url: "+server_url, "main.go", time.Now())
 	e.Logger.Fatal(e.Start(server_url))
 }
