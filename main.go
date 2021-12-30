@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"covid-app-ins/models"
+	"github.com/Nishankdawar/covid-app/models"
 
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
