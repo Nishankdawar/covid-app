@@ -1,6 +1,6 @@
 module github.com/Nishankdawar/covid-app
 
-// // +heroku goVersion go1.17
+// +heroku goVersion go1.17
 go 1.17
 
 require (
