@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/Nishankdawar/covid-app/literals"
@@ -61,12 +62,39 @@ func PopulateData(c echo.Context) error {
 	return c.JSONPretty(http.StatusCreated, bson.M{literals.STATUS: literals.CREATED}, " ")
 }
 
+func check_valid_input(lat string, long string) bool {
+	lat_i, err := strconv.ParseFloat(lat, 64)
+	if err != nil {
+		utils.ErrorLogger(err)
+		return false
+	}
+
+	long_i, err := strconv.ParseFloat(long, 64)
+	if err != nil {
+		utils.ErrorLogger(err)
+		return false
+	}
+	message := fmt.Sprintf("Value of latitude:%f and longitude:%f", lat_i, long_i)
+	utils.Logger("INFO", message, "handlers.go", time.Now())
+	return true
+}
+
 func CovidStats(c echo.Context) error {
 	logRequest(c.Request())
 	utils.Logger("INFO", "Inside CovidStats function", "handlers.go", time.Now())
 	latitude, longitude := c.FormValue("lat"), c.FormValue("long")
-	region_code := services.GetUserRegionCode(latitude, longitude)
-	state_codes := []string{region_code, literals.INDIA_CODE}
+
+	if !check_valid_input(latitude, longitude) {
+		return c.JSONPretty(http.StatusBadRequest, bson.M{"status": "INVALID LATITUDE AND LONGITUDE"}, " ")
+	}
+
+	region_code, country_code := services.GetUserRegionAndCountryCode(latitude, longitude)
+
+	if country_code != literals.INDIA_CODE {
+		return c.JSONPretty(http.StatusBadRequest, bson.M{"status": "Please enter coordinates which belongs to india!"}, " ")
+	}
+
+	state_codes := []string{region_code, literals.INDIA_CODE_FILTER}
 	filter := bson.M{"statecode": bson.M{"$in": state_codes}}
 
 	mongo_client := utils.GetMongoClient()
@@ -92,22 +120,27 @@ func CovidStats(c echo.Context) error {
 	var state_name string
 	var lastupdatedtime int64
 
-	for _, ele := range resultsFiltered {
-		if ele["statecode"] == literals.INDIA_CODE {
-			country_cases = ele["confirmed"].(int64)
+	if len(resultsFiltered) != 0 {
+		for _, ele := range resultsFiltered {
+			if ele["statecode"] == literals.INDIA_CODE_FILTER {
+				country_cases = ele["confirmed"].(int64)
+			}
+			if ele["statecode"] == region_code {
+				state_cases = ele["confirmed"].(int64)
+				state_name = ele["state"].(string)
+			}
+			lastupdatedtime = ele["lastupdatedtime"].(int64)
 		}
-		if ele["statecode"] == region_code {
-			state_cases = ele["confirmed"].(int64)
-			state_name = ele["state"].(string)
+
+		stats := models.UserStatsResponse{
+			CountryCases:    country_cases,
+			StateCases:      state_cases,
+			StateName:       state_name,
+			LastUpdatedTime: time.Unix(lastupdatedtime, 0).String(),
 		}
-		lastupdatedtime = ele["lastupdatedtime"].(int64)
+		return c.JSONPretty(http.StatusOK, stats, " ")
+	} else {
+		return c.JSONPretty(http.StatusOK, bson.M{"status": "data_not_populated"}, " ")
 	}
 
-	stats := models.UserStatsResponse{
-		CountryCases:    country_cases,
-		StateCases:      state_cases,
-		StateName:       state_name,
-		LastUpdatedTime: time.Unix(lastupdatedtime, 0).String(),
-	}
-	return c.JSONPretty(http.StatusOK, stats, " ")
 }

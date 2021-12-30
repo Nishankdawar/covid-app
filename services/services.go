@@ -12,10 +12,10 @@ import (
 	"github.com/Nishankdawar/covid-app/utils"
 )
 
-func GetUserRegionCode(latitude string, longitude string) string {
+func GetUserRegionAndCountryCode(latitude string, longitude string) (string, string) {
 
 	utils.Logger("INFO", "Inside GetUserRegionCode:", "services.go", time.Now())
-	reverse_geocoding := fmt.Sprintf(literals.REVERSE_GEOCODING_ENDPOINT, literals.TOKEN, latitude, longitude)
+	reverse_geocoding := fmt.Sprintf(literals.REVERSE_GEOCODING_ENDPOINT, literals.REVERSE_GEOCODING_TOKEN, latitude, longitude)
 	utils.Logger("INFO", "Reverse Geocoding URL: "+reverse_geocoding, "services.go", time.Now())
 	response, err := http.Get(reverse_geocoding)
 
@@ -36,7 +36,7 @@ func GetUserRegionCode(latitude string, longitude string) string {
 		utils.ErrorLogger(err1)
 	}
 
-	return strings.ToLower(jsonResponseReverseGeoCoding.Data[0].RegionCode)
+	return strings.ToLower(jsonResponseReverseGeoCoding.Data[0].RegionCode), strings.ToLower(jsonResponseReverseGeoCoding.Data[0].CountryCode)
 }
 
 func GetCovidData() models.JSONResponse {

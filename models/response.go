@@ -1,8 +1,9 @@
 package models
 
 type Address struct {
-	Region     string `json:"region"`
-	RegionCode string `json:"region_code"`
+	Region      string `json:"region"`
+	RegionCode  string `json:"region_code"`
+	CountryCode string `json:"country_code"`
 }
 
 type StateWiseArray struct {

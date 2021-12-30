@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -28,7 +29,20 @@ func ErrorLogger(err error) {
 
 func GetMongoClient() *mongo.Client {
 	Logger("INFO", "Creating mongo client in GetMongoClient:", "utils.go", time.Now())
-	client, err := mongo.NewClient(options.Client().ApplyURI(literals.MONGO_ENDPOINT))
+
+	build_mode := os.Getenv("BUILD_MODE")
+
+	var (
+		client *mongo.Client
+		err    error
+	)
+
+	if build_mode == "PROD" {
+		client, err = mongo.NewClient(options.Client().ApplyURI(literals.MONGO_ENDPOINT_PROD))
+	} else {
+		client, err = mongo.NewClient(options.Client().ApplyURI(literals.MONGO_ENDPOINT_LOCAL))
+	}
+
 	if err != nil {
 		ErrorLogger(err)
 	}
