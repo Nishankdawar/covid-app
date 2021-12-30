@@ -1,1 +1,1 @@
-web: bin/covid-app
+web: covid-app
