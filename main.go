@@ -218,5 +218,5 @@ func main() {
 	e.GET("/covid_stats", CovidStats)
 
 	e.Logger.Print(fmt.Sprintf("Listening to port %s", port))
-	e.Logger.Fatal(e.Start(fmt.Sprintf("localhost:%s", port)))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
