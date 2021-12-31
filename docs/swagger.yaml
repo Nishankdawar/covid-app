@@ -1,0 +1,56 @@
+basePath: /api/v1
+definitions:
+  models.UserStatsResponse:
+    properties:
+      countrycases:
+        type: integer
+      lastupdatedtime:
+        type: string
+      statecases:
+        type: integer
+      statename:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a sample Covid App server.
+  title: Swagger Covid Stats API
+  version: "1.0"
+paths:
+  /covid_stats:
+    get:
+      description: Gives stats of covid cases in user's state
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserStatsResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Gives stats of covid cases in user's state
+      tags:
+      - covid_stats
+  /populate_data:
+    post:
+      description: Populates database with covid data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Populates database with covid data
+      tags:
+      - populate_data
+swagger: "2.0"

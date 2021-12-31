@@ -7,10 +7,18 @@ import (
 
 	"github.com/Nishankdawar/covid-app/handlers"
 	"github.com/Nishankdawar/covid-app/utils"
+	echoSwagger "github.com/swaggo/echo-swagger"
+
+	_ "github.com/swaggo/echo-swagger/example/docs"
 
 	"github.com/labstack/echo/v4"
 )
 
+// @title Swagger Covid Stats API
+// @version 1.0
+// @description This is a sample Covid App server.
+
+// @BasePath /api/v1
 func main() {
 
 	utils.Logger("INFO", "Before fetching PORT in main function", "main.go", time.Now().UTC())
@@ -31,6 +39,7 @@ func main() {
 
 	base_api.POST("/populate_data", handlers.PopulateData)
 	base_api.GET("/covid_stats", handlers.CovidStats)
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	utils.Logger("INFO", "Listening to port: "+port, "main.go", time.Now())
 

@@ -1,0 +1,86 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample Covid App server.",
+        "title": "Swagger Covid Stats API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/api/v1",
+    "paths": {
+        "/covid_stats": {
+            "get": {
+                "description": "Gives stats of covid cases in user's state",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "covid_stats"
+                ],
+                "summary": "Gives stats of covid cases in user's state",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserStatsResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/populate_data": {
+            "post": {
+                "description": "Populates database with covid data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "populate_data"
+                ],
+                "summary": "Populates database with covid data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.UserStatsResponse": {
+            "type": "object",
+            "properties": {
+                "countrycases": {
+                    "type": "integer"
+                },
+                "lastupdatedtime": {
+                    "type": "string"
+                },
+                "statecases": {
+                    "type": "integer"
+                },
+                "statename": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
