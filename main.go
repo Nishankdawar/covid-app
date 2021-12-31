@@ -21,7 +21,6 @@ import (
 // @BasePath /api/v1
 func main() {
 
-	utils.Logger("INFO", "Before fetching PORT in main function", "main.go", time.Now().UTC())
 	port := os.Getenv("MY_APP_PORT")
 	build_mode := os.Getenv("BUILD_MODE")
 	if port == "" {
@@ -30,16 +29,11 @@ func main() {
 	if build_mode == "" {
 		build_mode = "PROD"
 	}
-	utils.Logger("INFO", "After fetching PORT in main function", "main.go", time.Now().UTC())
+
+	message_string := fmt.Sprintf("PORT: %s and BUILD_MODE: %s in main function", port, build_mode)
+	utils.Logger("INFO", message_string, "main.go", time.Now().UTC())
 
 	e := echo.New()
-	utils.Logger("INFO", "Creating instance of echo server in main function", "main.go", time.Now().UTC())
-
-	base_api := e.Group("/api/v1")
-
-	base_api.POST("/populate_data", handlers.PopulateData)
-	base_api.GET("/covid_stats", handlers.CovidStats)
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	utils.Logger("INFO", "Listening to port: "+port, "main.go", time.Now())
 
@@ -49,6 +43,14 @@ func main() {
 	} else {
 		server_url = fmt.Sprintf("localhost:" + port)
 	}
+
+	// Routes
+	base_api := e.Group("/api/v1")
+	{
+		base_api.POST("/populate_data", handlers.PopulateData)
+		base_api.GET("/covid_stats", handlers.CovidStats)
+	}
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	utils.Logger("INFO", "Starting server url: "+server_url, "main.go", time.Now())
 	e.Logger.Fatal(e.Start(server_url))
